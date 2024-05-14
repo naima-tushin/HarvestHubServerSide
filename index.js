@@ -9,8 +9,8 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(cors());
 app.use(cors({
-    origin: ["http://localhost:5000",]
-  }));
+    origin: ["http://localhost:5000"]
+}));
 app.use(express.json());
 
 
@@ -33,7 +33,7 @@ async function run() {
         const database = client.db("harvestFood");
         const foodCollection = database.collection("foods");
         const requestFoodCollection = database.collection("requestFood");
-         
+
 
         app.get('/allFood', async (req, res) => {
             const cursor = foodCollection.find();
@@ -59,7 +59,7 @@ async function run() {
 
         app.get('/myRequestFood/:userEmail', async (req, res) => {
             const userEmail = req.params.userEmail;
-            const query = { userEmail: userEmail }; 
+            const query = { userEmail: userEmail };
             const cursor = requestFoodCollection.find(query);
             const results = await cursor.toArray();
             res.send(results);
@@ -67,17 +67,17 @@ async function run() {
 
         app.put('/foodUpdate/:id', async (req, res) => {
             const id = req.params.id;
-            const filter = { _id: new ObjectId(id)}
+            const filter = { _id: new ObjectId(id) }
             const options = { upsert: true };
             const updatedFood = req.body;
             const food = {
                 $set: {
-                    foodName: updatedFood.foodName, 
-                    foodImage: updatedFood.foodImage, 
-                    foodStatus: updatedFood.foodStatus, 
-                    foodQuantity: updatedFood.foodQuantity, 
-                    pickupLocation: updatedFood.pickupLocation, 
-                    expiredDateTime: updatedFood.expiredDateTime, 
+                    foodName: updatedFood.foodName,
+                    foodImage: updatedFood.foodImage,
+                    foodStatus: updatedFood.foodStatus,
+                    foodQuantity: updatedFood.foodQuantity,
+                    pickupLocation: updatedFood.pickupLocation,
+                    expiredDateTime: updatedFood.expiredDateTime,
                 }
             }
             const result = await foodCollection.updateOne(filter, food, options);
@@ -85,13 +85,13 @@ async function run() {
         });
         app.put('/foodUpdateFoodStatus/:id', async (req, res) => {
             const id = req.params.id;
-            const filter = { _id: new ObjectId(id)}
+            const filter = { _id: new ObjectId(id) }
             const options = { upsert: true };
             const updatedFood = req.body;
             console.log(updatedFood);
             const food = {
                 $set: {
-                    foodStatus: updatedFood.foodStatus, 
+                    foodStatus: updatedFood.foodStatus,
                 }
             }
             const result = await foodCollection.updateOne(filter, food, options);
@@ -119,13 +119,13 @@ async function run() {
         });
 
 
-       
+
         // ! Comment this line when deploy to vercel
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    }catch (error) {
+    } catch (error) {
         console.error('Error connecting to MongoDB:', error);
-    }  finally {
+    } finally {
         // await client.close();
     }
 }
