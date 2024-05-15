@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(cors());
 app.use(cors({
-    origin: ["http://localhost:5000", "https://harvest-hub-client.web.app", "http://localhost:5173", "harvest-hub-client.firebaseapp.com"]
+    origin: ["http://localhost:5000", "https://harvest-hub-client.web.app", "http://localhost:5173", "https://harvest-hub-client.firebaseapp.com", "https://harvest-hub-server-nine.vercel.app"]
 }));
 app.use(express.json());
 
