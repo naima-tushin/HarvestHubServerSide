@@ -9,7 +9,7 @@ const port = process.env.PORT || 5000;
 // middleware
 app.use(cors());
 app.use(cors({
-    origin: ["http://localhost:5000"]
+    origin: ["http://localhost:5000", "https://harvest-hub-client.web.app", "http://localhost:5173", "harvest-hub-client.firebaseapp.com"]
 }));
 app.use(express.json());
 
@@ -27,7 +27,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // ! Comment this line when deploy to vercel
-        await client.connect();
+        // await client.connect();
 
         // ? Collection ID
         const database = client.db("harvestFood");
@@ -121,7 +121,7 @@ async function run() {
 
 
         // ! Comment this line when deploy to vercel
-        await client.db("admin").command({ ping: 1 });
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
