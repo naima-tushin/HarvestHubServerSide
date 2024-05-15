@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
@@ -7,7 +8,10 @@ const port = process.env.PORT || 5000;
 
 
 // middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    credentials: true
+}));
 app.use(cors({
     origin: ["http://localhost:5000", "https://harvest-hub-client.web.app", "http://localhost:5173", "https://harvest-hub-client.firebaseapp.com", "https://harvest-hub-server-nine.vercel.app"]
 }));
@@ -24,6 +28,11 @@ const client = new MongoClient(uri, {
     }
 });
 
+// middleware
+const logger = async(req, res, next)=>{
+    console.log('called:', req.host, req.originalUrl)
+    next();
+}
 async function run() {
     try {
         // ! Comment this line when deploy to vercel
@@ -34,7 +43,21 @@ async function run() {
         const foodCollection = database.collection("foods");
         const requestFoodCollection = database.collection("requestFood");
 
+        // auth realted api
+        app.post('/jwt', logger, async (req, res) => {
+            const user = req.body;
+            console.log(user);
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 
+            res
+            .cookie('token', token,{
+                httpOnly: true,
+                secure: false,
+            } )
+                .send({success: true});
+        })
+
+        // harvest hub related api
         app.get('/allFood', async (req, res) => {
             const cursor = foodCollection.find();
             const result = await cursor.toArray();
