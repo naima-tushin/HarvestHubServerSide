@@ -60,6 +60,7 @@ async function run() {
         const database = client.db("harvestFood");
         const foodCollection = database.collection("foods");
         const requestFoodCollection = database.collection("requestFood");
+        const reviewCollection = database.collection("reviews");
 
        
 
@@ -98,10 +99,20 @@ async function run() {
             res.send(result);
         });
 
+    
+
         app.get('/myFood/:donatorEmail', logger, async (req, res) => {
             const donatorEmail = req.params.donatorEmail;
             const query = { donatorEmail: donatorEmail }; 
             const cursor = foodCollection.find(query);
+            const results = await cursor.toArray();
+            res.send(results);
+        });
+
+        app.get('/fetchReviews/:foodId', logger, async (req, res) => {
+            const foodId = req.params.foodId;
+            const query = { foodId: foodId }; 
+            const cursor = reviewCollection.find(query);
             const results = await cursor.toArray();
             res.send(results);
         });
@@ -153,6 +164,14 @@ async function run() {
             const result = await foodCollection.insertOne(food);
             res.send(result);
         });
+
+        app.post('/addReview', async (req, res) => {
+            const review = req.body;
+            console.log('Review', review);
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        });
+
         app.post('/addRequestFood', async (req, res) => {
             const food = req.body;
             console.log('new request food', food);
